@@ -47,11 +47,11 @@ function TodoApp({ initialTodos=DEFAULT_INITIAL_TODOS }) {
   }
 
   /** update a todo with updatedTodo */
-  function update(id, updatedTodo) {
+  function update(updatedTodo) {
     setTodos(todos =>
       todos.map(todo => // takes todo and updaets info necessary
-        todo.id === id
-          ? { ...updatedTodo, id }
+        todo.id === updatedTodo.id
+          ? updatedTodo
           : todo
       )
     );

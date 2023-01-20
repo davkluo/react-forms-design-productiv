@@ -1,5 +1,12 @@
 import React from "react";
 
+const DEFAULT_SAMPLE_TODO = {
+  id: 9000,
+  title: 'Title',
+  description: 'Description.',
+  priority: 1
+};
+
 /** Simple presentation component for a todo.
  *
  * Props:
@@ -8,7 +15,7 @@ import React from "react";
  * { EditableTodo, TopTodo } -> Todo
  **/
 
-function Todo({ todo }) {
+function Todo({ todo=DEFAULT_SAMPLE_TODO }) {
   return (
       <div className="Todo">
         <div>
