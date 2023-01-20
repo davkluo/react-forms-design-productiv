@@ -42,14 +42,14 @@ function TodoApp({ initialTodos=DEFAULT_INITIAL_TODOS }) {
 
   /** add a new todo to list */
   function create(newTodo) {
-    const todo = { ...newTodo, id: uuid() };
+    const todo = { ...newTodo, id: uuid() }; // taking new todo and appending uuid info
     setTodos(todos => [ ...todos, todo ]);
   }
 
   /** update a todo with updatedTodo */
   function update(id, updatedTodo) {
     setTodos(todos =>
-      todos.map(todo =>
+      todos.map(todo => // takes todo and updaets info necessary
         todo.id === id
           ? { ...updatedTodo, id }
           : todo
@@ -72,7 +72,7 @@ function TodoApp({ initialTodos=DEFAULT_INITIAL_TODOS }) {
 
           <div className="col-md-6">
             { !todosIsEmpty &&
-              <EditableTodoList />
+              <EditableTodoList todos={todos} update={update} remove={remove} />
             }
             { todosIsEmpty &&
               <span className="text-muted">You have no todos.</span>
@@ -83,7 +83,7 @@ function TodoApp({ initialTodos=DEFAULT_INITIAL_TODOS }) {
             { !todosIsEmpty &&
               <section className="mb-4">
                 <h3>Top Todo</h3>
-                <TopTodo />
+                <TopTodo todos={todos}/>
               </section>
             }
 
