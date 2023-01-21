@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, within } from "@testing-library/react";
 import TodoApp from "./TodoApp";
 import { DEFAULT_TESTING_TODOS } from './_TestCommons';
 
@@ -36,15 +36,85 @@ describe("Testing TodoApp", function () {
     expect(screen.queryByText('Add Nü')).toBeInTheDocument();
   })
 
-  // // test that top Todo shows highestpriority
-  // test('should show correct highest priority', function() {
-  //   render(<TodoApp initialTodos={DEFAULT_TESTING_TODOS} />);
-  //   expect(screen.queryAllByText('Test1 Title!').length).toEqual(2);
-  // })
+  test('should add new todo', function() {
+    render(<TodoApp initialTodos={DEFAULT_TESTING_TODOS} />);
 
-  // test Add Nu adds a new todo
+    const titleInput = screen.getByPlaceholderText('Title');
+    const descriptionInput = screen.getByPlaceholderText('Description');
+    const submitBtn = screen.getByText('Gø!');
 
-  // should be able to delete something
+    fireEvent.change(titleInput, { target: { value: 'eat ice cream' } });
+    fireEvent.change(descriptionInput, { target: { value: 'do it now' } });
+    fireEvent.click(submitBtn);
+
+    expect(screen.getByText('eat ice cream')).toBeInTheDocument();
+  })
+
+  test('should add new todo and update toptodo', function() {
+    const altTestingTodos = JSON.parse(JSON.stringify(DEFAULT_TESTING_TODOS));
+    altTestingTodos.shift();
+
+    render(<TodoApp initialTodos={altTestingTodos} />);
+
+    expect(screen.queryByText('Test1 Title!')).not.toBeInTheDocument();
+
+    const topTodoContainer = screen.getByText('Top Todo').parentElement;
+    expect(within(topTodoContainer).getByText('Test2 Title!')).toBeInTheDocument();
+
+    const titleInput = screen.getByPlaceholderText('Title');
+    const descriptionInput = screen.getByPlaceholderText('Description');
+    const submitBtn = screen.getByText('Gø!');
+
+    fireEvent.change(titleInput, { target: { value: 'eat ice cream' } });
+    fireEvent.change(descriptionInput, { target: { value: 'do it now' } });
+    fireEvent.click(submitBtn);
+
+    expect(within(topTodoContainer).getByText('eat ice cream')).toBeInTheDocument();
+    expect(within(topTodoContainer).queryByText('Test2 Title!')).not.toBeInTheDocument();
+  })
+
+  test('should delete a todo', function() {
+    render(<TodoApp initialTodos={DEFAULT_TESTING_TODOS} />);
+
+    const todoList = screen.getByText('Todo List').parentElement;
+    const editableTodo = within(todoList)
+      .getByText('Test1 Title!')
+      .parentElement
+      .parentElement
+      .parentElement;
+    const deleteBtn = within(editableTodo).getByText('Del');
+
+    fireEvent.click(deleteBtn);
+
+    expect(screen.queryByText('Test1 Title!')).not.toBeInTheDocument();
+  })
+
+  test('should edit a todo', function() {
+    render(<TodoApp initialTodos={DEFAULT_TESTING_TODOS} />);
+
+    const todoList = screen.getByText('Todo List').parentElement;
+    const editableTodo = within(todoList)
+      .getByText('Test1 Title!')
+      .parentElement
+      .parentElement
+      .parentElement
+      .parentElement;
+    const editBtn = within(editableTodo).getByText('Edit');
+
+    fireEvent.click(editBtn);
+
+    const titleInput = within(editableTodo).getByPlaceholderText('Title');
+    const descriptionInput = within(editableTodo).getByPlaceholderText('Description');
+    const submitBtn = within(editableTodo).getByText('Gø!');
+
+    fireEvent.change(titleInput, { target: { value: 'eat ice cream' } });
+    fireEvent.change(descriptionInput, { target: { value: 'do it now' } });
+    fireEvent.click(submitBtn);
+
+    expect(within(todoList).getByText('eat ice cream')).toBeInTheDocument();
+  })
+
+
   //should be able to edit something
 
   // test EditableTodoList
